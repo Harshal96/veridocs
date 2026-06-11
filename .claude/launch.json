@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "veridocs-example",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["bin/veridocs.js", "serve", "--source", "example/source", "--theme", "example/theme", "--out", "build", "--port", "4567"],
+      "port": 4567
+    },
+    {
+      "name": "nextjs-shadcn",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "frontends/nextjs-shadcn"],
+      "port": 4569
+    }
+  ]
+}

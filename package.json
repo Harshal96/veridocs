@@ -1,0 +1,38 @@
+{
+  "name": "veridocs",
+  "version": "0.1.0",
+  "description": "Beautiful, Slate-compatible API documentation. Static by default, hackable by design.",
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "bin": {
+    "veridocs": "bin/veridocs.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "themes",
+    "example"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "build:example": "node bin/veridocs.js build --source example/source --out build",
+    "serve:example": "node bin/veridocs.js serve --source example/source --out build"
+  },
+  "keywords": [
+    "api",
+    "documentation",
+    "docs",
+    "slate",
+    "static-site-generator",
+    "markdown"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "highlight.js": "^11.11.1",
+    "js-yaml": "^4.2.0",
+    "markdown-it": "^14.2.0"
+  }
+}

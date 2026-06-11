@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="{{lang_attr}}" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="veridocs">
+  <title>{{title}}</title>
+  {{{meta}}}
+  <link rel="stylesheet" href="assets/theme.css">
+  {{{override_css}}}
+  <style id="vd-tab-css">{{{tab_css}}}</style>
+  <script>
+    // Apply the saved theme before first paint to avoid a flash.
+    (function () {
+      try {
+        var t = localStorage.getItem('vd-theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) {}
+    })();
+  </script>
+  {{{head_extra}}}
+</head>
+<body data-lang="{{default_lang}}" class="{{{search_class}}}">
+  <a class="vd-skip" href="#vd-content">Skip to content</a>
+
+  <aside class="vd-sidebar" id="vd-sidebar">
+    <div class="vd-brand">{{{brand}}}</div>
+    {{{header_extra}}}
+    <div class="vd-search" id="vd-search">
+      <svg class="vd-search-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.74 10.34a6.5 6.5 0 1 0-1.4 1.4l3.46 3.47a1 1 0 0 0 1.42-1.42l-3.48-3.45ZM2 6.5a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z"/></svg>
+      <input id="vd-search-input" type="search" placeholder="Search the docs" autocomplete="off"
+             role="combobox" aria-expanded="false" aria-controls="vd-search-results">
+      <kbd class="vd-search-kbd">/</kbd>
+      <div class="vd-search-results" id="vd-search-results" role="listbox" hidden></div>
+    </div>
+    <nav class="vd-toc" id="vd-toc" aria-label="Table of contents">
+      {{{toc}}}
+    </nav>
+    <ul class="vd-toc-footers">
+      {{{toc_footers}}}
+    </ul>
+  </aside>
+
+  <div class="vd-main">
+    <header class="vd-topbar" id="vd-topbar">
+      <button class="vd-nav-toggle" id="vd-nav-toggle" type="button" aria-label="Toggle navigation" aria-controls="vd-sidebar">
+        <svg viewBox="0 0 16 16" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M1 3h14v1.6H1V3Zm0 4.2h14v1.6H1V7.2Zm0 4.2h14V13H1v-1.6Z"/></svg>
+      </button>
+      {{{lang_bar}}}
+      <span class="vd-topbar-spacer"></span>
+      <button class="vd-theme-toggle" id="vd-theme-toggle" type="button" aria-label="Toggle dark mode">
+        <svg class="vd-icon-sun" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M8 11.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0Zm0 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13ZM2.343 2.343a.75.75 0 0 1 1.061 0l1.06 1.061a.75.75 0 0 1-1.06 1.06l-1.06-1.06a.75.75 0 0 1 0-1.06Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 0 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061ZM0 8a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5H.75A.75.75 0 0 1 0 8Zm13 0a.75.75 0 0 1 .75-.75h1.5a.75.75 0 0 1 0 1.5h-1.5A.75.75 0 0 1 13 8ZM4.464 11.536a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0Zm9.193-9.193a.75.75 0 0 1 0 1.061l-1.06 1.06a.75.75 0 1 1-1.061-1.06l1.06-1.06a.75.75 0 0 1 1.061 0Z"/></svg>
+        <svg class="vd-icon-moon" viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Z"/></svg>
+      </button>
+    </header>
+
+    <main class="vd-content" id="vd-content">
+      <div class="vd-darkbox" aria-hidden="true"></div>
+      {{{content}}}
+      <div class="vd-content-end" aria-hidden="true"></div>
+    </main>
+
+    <footer class="vd-footer">
+      <span>Built with <a href="https://github.com/harshalparekh/veridocs" rel="noopener">Veridocs ✦</a></span>
+    </footer>
+  </div>
+
+  <div class="vd-backdrop" id="vd-backdrop" aria-hidden="true"></div>
+
+  <script id="vd-search-index" type="application/json">{{{search_index}}}</script>
+  <script src="assets/app.js" defer></script>
+  {{{append_js}}}
+  {{{footer_extra}}}
+</body>
+</html>

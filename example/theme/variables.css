@@ -1,0 +1,46 @@
+/*
+ * Veridocs theme overrides
+ * ------------------------
+ * Uncomment any token to override the default theme — no rebuild of the
+ * theme itself is needed, just `veridocs build`. Colors use light-dark():
+ * the first value applies in light mode, the second in dark mode.
+ * Plain values (e.g. `--vd-accent: hotpink;`) work too.
+ *
+ * The full token list lives in assets/theme.css (top of the file) and in
+ * THEMING.md in the Veridocs repository.
+ */
+
+:root {
+  /* ---- Layout ----------------------------------------------------------
+  --vd-sidebar-w: 264px;          sidebar width
+  --vd-examples: 0.45;            code column share of the content area
+  --vd-content-max: 52rem;        max line length for prose
+  ----------------------------------------------------------------------- */
+
+  /* ---- Brand ------------------------------------------------------------
+  --vd-accent: light-dark(#0d9488, #2dd4bf);
+  --vd-brand-gradient: linear-gradient(135deg, #2dd4bf, #6366f1);
+  ----------------------------------------------------------------------- */
+
+  /* ---- Surfaces ----------------------------------------------------------
+  --vd-bg: light-dark(#ffffff, #0b0e14);
+  --vd-text: light-dark(#374151, #c5cdd9);
+  --vd-heading: light-dark(#111827, #f1f5fb);
+  --vd-sidebar-bg: light-dark(#10141d, #0d1018);
+  --vd-examples-bg: light-dark(#0e1320, #0e111b);
+  --vd-code-bg: light-dark(#171e30, #161b29);
+  ----------------------------------------------------------------------- */
+
+  /* ---- Typography ---------------------------------------------------------
+  --vd-font: "Inter", ui-sans-serif, sans-serif;
+  --vd-font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --vd-font-size: 15px;
+  ----------------------------------------------------------------------- */
+
+  /* ---- Syntax palette ------------------------------------------------------
+  --vd-tok-keyword: #bb9af7;
+  --vd-tok-string: #9ece6a;
+  --vd-tok-number: #ff9e64;
+  --vd-tok-function: #7aa2f7;
+  ----------------------------------------------------------------------- */
+}

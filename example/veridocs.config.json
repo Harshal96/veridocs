@@ -1,0 +1,6 @@
+{
+  "source": "source",
+  "out": "build",
+  "theme": "theme",
+  "port": 4567
+}
