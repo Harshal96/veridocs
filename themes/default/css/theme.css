@@ -13,6 +13,9 @@
   /* ---- Layout ---------------------------------------------------------- */
   --vd-sidebar-w: 264px;        /* sidebar width */
   --vd-examples: 0.45;          /* code column share of the content area */
+  --vd-examples-max: 760px;     /* code column width cap on very wide screens */
+  --vd-examples-col: min(calc((100vw - var(--vd-sidebar-w)) * var(--vd-examples)),
+                         var(--vd-examples-max));
   --vd-content-pad: 36px;       /* horizontal padding, prose column */
   --vd-example-pad: 26px;       /* horizontal padding, code column */
   --vd-topbar-h: 52px;
@@ -457,22 +460,30 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
   top: 0;
   right: 0;
   bottom: 0;
-  width: calc((100vw - var(--vd-sidebar-w)) * var(--vd-examples));
+  width: var(--vd-examples-col);
   background: var(--vd-examples-bg);
   z-index: -1;
 }
 
 .vd-content > * {
-  margin: 1.05em calc(100% * var(--vd-examples)) 1.05em 0;
+  margin: 1.05em var(--vd-examples-col) 1.05em 0;
   padding: 0 var(--vd-content-pad);
   max-width: calc(var(--vd-content-max) + 2 * var(--vd-content-pad));
+}
+
+/* The darkbox is a child of .vd-content but is the panel itself, not flow
+   content — the column margins/max-width above must not apply to it. */
+.vd-content > .vd-darkbox {
+  margin: 0;
+  padding: 0;
+  max-width: none;
 }
 
 /* Examples float right into the dark column. */
 .vd-content > .vd-example {
   float: right;
   clear: right;
-  width: calc(100% * var(--vd-examples) - 2 * var(--vd-example-pad));
+  width: calc(var(--vd-examples-col) - 2 * var(--vd-example-pad));
   max-width: none;
   margin: 14px var(--vd-example-pad);
   padding: 0;
@@ -498,7 +509,7 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
   margin: 0;
   margin-top: 2.2rem;
   padding-top: 2.6rem;
-  padding-right: calc(100% * var(--vd-examples) + var(--vd-content-pad));
+  padding-right: calc(var(--vd-examples-col) + var(--vd-content-pad));
   max-width: none;
   border-top: 1px solid var(--vd-divider);
   font-size: 1.85rem;
@@ -550,7 +561,7 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
 
 .vd-content > table {
   border-collapse: collapse;
-  width: calc(100% * (1 - var(--vd-examples)) - 2 * var(--vd-content-pad));
+  width: calc(100% - var(--vd-examples-col) - 2 * var(--vd-content-pad));
   margin-left: var(--vd-content-pad);
   margin-right: 0;
   padding: 0;
@@ -686,12 +697,14 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
   padding: 0;
 }
 
-/* Annotations: blockquotes render as callouts above/between code panels. */
-.vd-annotation {
+/* Annotations: blockquotes render as callouts above/between code panels.
+   The compound selector outranks the `.vd-content > .vd-example` layout rule,
+   which zeroes padding for code panels. */
+.vd-example.vd-annotation {
   background: var(--vd-annotation-bg);
   border-left: 3px solid var(--vd-annotation-border);
   border-radius: 8px;
-  padding: 2px 16px;
+  padding: 6px 16px;
   color: var(--vd-annotation-text);
   font-size: 13px;
 }
@@ -730,7 +743,7 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
 .vd-footer {
   position: relative;
   z-index: 2;
-  margin-right: calc(100% * var(--vd-examples));
+  margin-right: var(--vd-examples-col);
   padding: 16px var(--vd-content-pad) 22px;
   border-top: 1px solid var(--vd-divider);
   font-size: 12px;
@@ -753,10 +766,18 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
   z-index: 35;
 }
 
-@media (max-width: 1020px) {
-  :root { --vd-examples: 0; --vd-content-pad: 22px; }
+/* On very wide screens the code column is capped (--vd-examples-max); let the
+   prose column breathe into the leftover space. */
+@media (min-width: 1800px) {
+  :root { --vd-content-pad: 56px; --vd-content-max: 58rem; }
+}
+
+/* Stage 1: the sidebar folds away first, leaving the dual columns intact. */
+@media (max-width: 1180px) {
+  :root { --vd-sidebar-w: 0px; }
 
   .vd-sidebar {
+    width: 264px;
     transform: translateX(-102%);
     transition: transform 0.22s ease;
     box-shadow: none;
@@ -769,6 +790,12 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
 
   .vd-main { margin-left: 0; }
   .vd-nav-toggle { display: grid; }
+}
+
+/* Stage 2: the code column collapses inline with the prose. */
+@media (max-width: 920px) {
+  :root { --vd-examples: 0; --vd-content-pad: 22px; }
+
   .vd-darkbox { display: none; }
 
   .vd-content > .vd-example {
@@ -780,9 +807,10 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
 
   /* Off the dark column, annotations sit on the page background and
      need page-aware colors. */
-  .vd-annotation {
+  .vd-example.vd-annotation {
     background: var(--vd-inline-code-bg);
     color: var(--vd-text);
+    padding: 8px 16px;
   }
   .vd-annotation :not(pre) > code {
     background: light-dark(rgba(15, 23, 42, 0.08), rgba(255, 255, 255, 0.09));
@@ -805,5 +833,6 @@ html[data-resolved="dark"] .vd-icon-moon { display: none; }
   .vd-main { margin-left: 0; }
   .vd-content > .vd-example { float: none; width: auto; margin: 14px var(--vd-content-pad); padding: 0; }
   .vd-code, .vd-annotation { border: 1px solid #ccc; background: #f7f8fa; }
+  .vd-example.vd-annotation { padding: 8px 16px; }
   .vd-code code, .vd-annotation { color: #1f2937; }
 }
