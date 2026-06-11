@@ -1,0 +1,38 @@
+# Bazel build for this docs project.
+#
+#   bazel build :site            static site in bazel-bin/.../site
+#   bazel run   :image_oci.load  build + load the nginx image (rules_oci)
+#   bazel run   :image_img.load  build + load the nginx image (rules_img)
+#
+# Adding content needs no edits here: anything under source/ (markdown,
+# includes/, images/, fonts...) and theme/ (variables.css, custom.css,
+# header.html...) is picked up automatically.
+
+load("@veridocs//bazel:defs.bzl", "veridocs_img_image", "veridocs_oci_image", "veridocs_site")
+
+veridocs_site(
+    name = "site",
+    visibility = ["//visibility:public"],
+)
+
+# The same image through two pipelines — pick one for your project.
+# rules_oci: the established ruleset, layers assembled as tars.
+veridocs_oci_image(
+    name = "image_oci",
+    nginx_conf = ":nginx.conf",
+    repo_tags = ["veridocs-example:latest"],
+    site = ":site",
+    # To enable `bazel run :image_oci.push`:
+    # repository = "ghcr.io/you/your-docs",
+)
+
+# rules_img: shallow base pulls, faster incremental image builds.
+veridocs_img_image(
+    name = "image_img",
+    nginx_conf = ":nginx.conf",
+    site = ":site",
+    tag = "veridocs-example:latest",
+    # To enable `bazel run :image_img.push`:
+    # registry = "ghcr.io",
+    # repository = "you/your-docs",
+)

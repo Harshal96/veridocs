@@ -1,0 +1,47 @@
+# Veridocs engine.
+#
+# Everything is glob()-based: adding a new file under src/, themes/, or
+# test/ requires no BUILD edits.
+
+load("@aspect_rules_js//js:defs.bzl", "js_binary", "js_library", "js_test")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+# Creates //:node_modules/<package> targets from the pnpm lockfile.
+npm_link_all_packages(name = "node_modules")
+
+# The engine sources plus the default theme. The default theme ships with
+# the binary because build.js resolves it relative to src/ at runtime.
+js_library(
+    name = "engine",
+    srcs = glob([
+        "src/**/*.js",
+        "themes/**",
+    ]) + ["package.json"],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":node_modules/highlight.js",
+        ":node_modules/js-yaml",
+        ":node_modules/markdown-it",
+    ],
+)
+
+# The CLI: bazel run //:veridocs -- build --source ... --out ...
+# Also the tool behind the veridocs_site() macro in //bazel:defs.bzl.
+js_binary(
+    name = "veridocs",
+    data = [":engine"],
+    entry_point = "bin/veridocs.js",
+    visibility = ["//visibility:public"],
+)
+
+# node:test files exit non-zero on failure when run directly, so each test
+# file is its own js_test.
+[
+    js_test(
+        name = test_file[len("test/"):-len(".test.js")] + "_test",
+        size = "small",
+        data = [":engine"],
+        entry_point = test_file,
+    )
+    for test_file in glob(["test/*.test.js"])
+]

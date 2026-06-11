@@ -117,6 +117,41 @@ Or `docker compose up`. To try this repo's bundled example:
 The scaffold includes `.github/workflows/pages.yml`. Enable Pages
 (Source: GitHub Actions) and push to `main`.
 
+### Bazel
+
+Scaffolded projects are also Bazel modules ([rules_js](https://github.com/aspect-build/rules_js)
+builds the site; [rules_oci](https://github.com/bazel-contrib/rules_oci) and
+[rules_img](https://github.com/bazel-contrib/rules_img) both ship as container
+pipelines — pick either):
+
+```sh
+bazel build :site            # static site as a directory artifact
+bazel run   :image_oci.load  # nginx image via rules_oci → local docker
+bazel run   :image_img.load  # nginx image via rules_img → local docker
+bazel run   :image_oci.push  # multi-arch push (set `repository` first)
+```
+
+Everything under `source/` and `theme/` is globbed — new pages, includes,
+images, and theme overrides need no BUILD edits. The macros live in
+[bazel/defs.bzl](bazel/defs.bzl):
+
+```starlark
+load("@veridocs//bazel:defs.bzl", "veridocs_site", "veridocs_oci_image", "veridocs_img_image")
+
+veridocs_site(name = "site")                          # globs source/** + theme/**
+
+veridocs_oci_image(
+    name = "image_oci",
+    site = ":site",
+    repository = "ghcr.io/you/your-docs",             # enables :image_oci.push
+)
+```
+
+Images are always linux (matching the host CPU by default, so macOS works
+unmodified), serve on port 80 with the same nginx config as the Docker
+setup, and `<name>.index` targets give you multi-arch (amd64 + arm64)
+manifests for pushing.
+
 ## Migrating from Slate
 
 1. `veridocs init my-docs && cd my-docs`
@@ -219,6 +254,11 @@ npm install
 npm test                  # node:test suite
 npm run serve:example     # hack on the engine/theme against the example
 ```
+
+The same engine, tests, and example also build with Bazel — `bazel test //...`
+runs the suite, `bazel build //example:site` builds the demo. After changing
+dependencies in `package.json`, refresh the Bazel lockfile with
+`npx pnpm@10 install --lockfile-only`.
 
 PRs welcome. The whole engine is ~600 lines across [src/](src/); the theme
 lives in [themes/default/](themes/default/).

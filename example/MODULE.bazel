@@ -1,0 +1,29 @@
+# Bazel module for this docs project.
+#
+# NOTE: inside the veridocs repository this file is inert (the repo root
+# MODULE.bazel is the real one). In a project scaffolded by `veridocs init`
+# it makes the project a standalone Bazel module: BUILD.bazel +
+# @veridocs//bazel:defs.bzl give you the site and nginx images with zero
+# further setup.
+
+module(
+    name = "docs",
+    version = "0.1.0",
+)
+
+bazel_dep(name = "veridocs", version = "0.1.0")
+
+# veridocs is not in the Bazel Central Registry yet — point at the sources.
+# For reproducible builds, swap this for a git_override pinned to a commit:
+#   git_override(module_name = "veridocs", remote = "https://github.com/Harshal96/veridocs.git", commit = "...")
+archive_override(
+    module_name = "veridocs",
+    strip_prefix = "veridocs-main",
+    urls = ["https://github.com/Harshal96/veridocs/archive/refs/heads/main.tar.gz"],
+)
+
+# ...or, while hacking on veridocs itself, use a local checkout instead:
+# local_path_override(
+#     module_name = "veridocs",
+#     path = "../veridocs",
+# )

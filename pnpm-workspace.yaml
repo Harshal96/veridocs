@@ -1,0 +1,3 @@
+# pnpm settings (the lockfile is consumed by Bazel through rules_js).
+# No dependency needs a lifecycle/build script, so none are allowed.
+allowBuilds: {}

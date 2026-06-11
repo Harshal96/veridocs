@@ -1,0 +1,5 @@
+# Public Bazel API: load("@veridocs//bazel:defs.bzl", ...)
+
+# Fallback nginx config used by the image macros when a project does not
+# provide its own.
+exports_files(["nginx.default.conf"])

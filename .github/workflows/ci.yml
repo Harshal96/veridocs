@@ -20,3 +20,20 @@ jobs:
       - run: npm test
       - name: Build the example site
         run: node bin/veridocs.js build --source example/source --theme example/theme --out build --json
+
+  bazel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Mount Bazel caches
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/bazel
+            ~/.cache/bazelisk
+          key: bazel-${{ hashFiles('.bazelversion', 'MODULE.bazel', 'pnpm-lock.yaml') }}
+          restore-keys: bazel-
+      # Builds everything: the engine, the example site, and the nginx
+      # images through both rules_oci and rules_img.
+      - run: bazel build //...
+      - run: bazel test //...

@@ -1,0 +1,9 @@
+# Show full test failures instead of just the log path.
+test --test_output=errors
+
+# Container image targets always build for linux; the veridocs_*_image
+# macros pick the linux platform matching the host CPU automatically, so
+# no flags are needed for `bazel build //example:image_oci` on macOS.
+
+# Project-local overrides (untracked).
+try-import %workspace%/.bazelrc.user

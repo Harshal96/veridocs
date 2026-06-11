@@ -1,0 +1,73 @@
+# Veridocs — Bazel module.
+#
+# Provides:
+#   //:veridocs                      the CLI as a js_binary
+#   //bazel:defs.bzl                 veridocs_site / veridocs_oci_image / veridocs_img_image
+#
+# Downstream docs projects depend on this module (see example/MODULE.bazel
+# for the scaffolded setup) and get the macros, the CLI, and the pinned
+# nginx base images for free.
+
+module(
+    name = "veridocs",
+    version = "0.1.0",
+    compatibility_level = 1,
+)
+
+bazel_dep(name = "aspect_rules_js", version = "3.2.1")
+bazel_dep(name = "rules_nodejs", version = "6.7.4")
+bazel_dep(name = "aspect_bazel_lib", version = "2.22.5")
+bazel_dep(name = "bazel_skylib", version = "1.9.0")
+bazel_dep(name = "platforms", version = "1.1.0")
+bazel_dep(name = "rules_oci", version = "2.3.0")
+bazel_dep(name = "rules_img", version = "0.3.12")
+bazel_dep(name = "tar.bzl", version = "0.10.5")
+
+# ---------------------------------------------------------------------------
+# npm dependencies (markdown-it, js-yaml, highlight.js)
+#
+# rules_js consumes a pnpm lockfile. It is generated from package.json with:
+#   npx pnpm@10 install --lockfile-only
+# Re-run that command whenever package.json dependencies change.
+# ---------------------------------------------------------------------------
+npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
+npm.npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
+)
+use_repo(npm, "npm")
+
+# ---------------------------------------------------------------------------
+# Base images: nginx:1.29-alpine, pinned by digest (the digest is the
+# multi-arch manifest list, so both linux/amd64 and linux/arm64 work).
+#
+# The same image is pulled twice — once for rules_oci and once for
+# rules_img — so either image pipeline can be used independently.
+# ---------------------------------------------------------------------------
+
+# rules_oci base image.
+oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+oci.pull(
+    name = "nginx_alpine",
+    # nginx:1.29-alpine
+    digest = "sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de",
+    image = "index.docker.io/library/nginx",
+    platforms = [
+        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+)
+use_repo(oci, "nginx_alpine", "nginx_alpine_linux_amd64", "nginx_alpine_linux_arm64_v8")
+
+# rules_img base image (shallow pull: only the manifest is downloaded).
+pull = use_repo_rule("@rules_img//img:pull.bzl", "pull")
+
+pull(
+    name = "nginx_alpine_img",
+    # nginx:1.29-alpine
+    digest = "sha256:5616878291a2eed594aee8db4dade5878cf7edcb475e59193904b198d9b830de",
+    registry = "index.docker.io",
+    repository = "library/nginx",
+    tag = "1.29-alpine",
+)

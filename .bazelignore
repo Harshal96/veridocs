@@ -1,0 +1,5 @@
+node_modules
+build
+example/build
+example/node_modules
+frontends
